@@ -41,8 +41,10 @@ Integrating Plaid
 --- /get-accounts/ -> Getting user accounts
 ```
 
+```bash
 Celery Broker -> RabbitMQ
 Celery Backend -> SQLite
+```
 
 
 
