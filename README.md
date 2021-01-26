@@ -44,6 +44,7 @@ Integrating Plaid
 --- /token-exchange/ -> Generating access token
 --- /get-transactions/ -> Getting user transactions
 --- /get-accounts/ -> Getting user accounts
+--- /update-transaction/ -> Return transactions when a POST request is made.(hook)
 ```
 
 ```bash
