@@ -25,4 +25,5 @@ urlpatterns = [
     path('token-exchange/', views.TokenExchange.as_view(), name="token-exchange"),
     path('get-transactions/', views.GetTransactions.as_view(), name="transactions"),
     path('get-accounts/', views.GetAccounts.as_view(), name="account"),
+    path('update-transaction/', views.TransactionUpdate.as_view(), name="update-transaction-hook"),
 ]

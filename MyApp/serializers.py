@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime
+from datetime import datetime, timedelta
 import plaid
 from uuid import uuid4
 from .models import User
@@ -243,4 +243,41 @@ class GetAccountSerializer(serializers.Serializer):
             'accounts',
             'item',
             'numbers'
+        )
+
+
+class TransactionUpdateSerializer(serializers.ModelSerializer):
+    email = serializers.CharField()
+    transactions = serializers.JSONField(required=False, read_only=True)
+
+    def validate(self, data):
+        email = data.get("email", None)
+        user = None
+        try:
+            user = User.objects.get(email=email)
+            if not user.access_token:
+                raise ValidationError('Access Token not generated')
+        except ObjectDoesNotExist:
+            raise ValidationError('User Does not exist')
+
+        access_token = user.access_token
+        transactions = {}
+
+        try:
+            start_date = '{:%Y-%m-%d}'.format(datetime.now() + timedelta(-30))
+            end_date = '{:%Y-%m-%d}'.format(datetime.now())
+            transactions = get_transactions.delay(
+                access_token, start_date, end_date)
+            transactions = transactions.get()
+        except plaid.errors.PlaidError as e:
+            raise ValidationError(str(e))
+
+        transactions['email'] = email
+        return transactions
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'transactions',
         )
