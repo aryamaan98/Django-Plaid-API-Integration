@@ -61,7 +61,7 @@ Update Transaction (hook) -> Make a POST request at /update-transactions/ with u
 --- /token-exchange/ -> Generating access token
 --- /get-transactions/ -> Getting user transactions
 --- /get-accounts/ -> Getting user accounts
---- /update-transaction/ -> Return transactions when a POST request is made.(hook)
+--- /update-transaction/ -> Updates user by sending email when a POST request is made.(hook)
 ```
 
 ```bash
