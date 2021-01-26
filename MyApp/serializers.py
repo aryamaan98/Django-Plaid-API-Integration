@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from datetime import datetime, timedelta
 import plaid
-import json
 from uuid import uuid4
 from .models import User
 from .utils import get_plaid_client
