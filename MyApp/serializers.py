@@ -1,9 +1,8 @@
-from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime, timedelta
+from datetime import datetime
 import plaid
 from uuid import uuid4
 from .models import User
