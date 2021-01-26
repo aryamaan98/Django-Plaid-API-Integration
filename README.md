@@ -1,6 +1,23 @@
 # Django-Plaid-API-Integration
 Integrating Plaid
 
+### Description
+```bash
+Create User -> Make a POST request at /register-user/ with email and password to create new user.
+
+Login -> Make a POST request at /login/ with email and password.Returns a token if login is successful and is_logged_in is set to true.
+
+Logout -> Make a POST request at /logout/ with the token generated at login. is_logged_in is set to false.
+
+Token Exchange -> Make a GET request at /token-exchange/ with email and public_token.Returns access_token if not generated already.
+
+Get Transaction -> Make a GET request a /get-transactions/ with email, start_date and end_date. Returns transactions within given timeperiod.
+
+Get Accounts -> Make a GET request at /get-accounts/ with email.Return user accounts.
+
+Update Transaction (hook) -> Make a POST request at /update-transactions/ with user email.Fetches transactions for the last 1 month.
+```
+
 ## Instructions
 
 ### Install Dependencies
