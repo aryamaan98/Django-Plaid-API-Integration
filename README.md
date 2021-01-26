@@ -15,7 +15,7 @@ Get Transaction -> Make a GET request a /get-transactions/ with email, start_dat
 
 Get Accounts -> Make a GET request at /get-accounts/ with email.Return user accounts.
 
-Update Transaction (hook) -> Make a POST request at /update-transactions/ with user email.Fetches transactions for the last 1 month.
+Update Transaction (hook) -> Make a POST request at /update-transactions/ with user email and transaction id.Fetches the transaction. Updates user by sending email.
 ```
 
 ## Instructions

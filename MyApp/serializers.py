@@ -2,8 +2,10 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 from datetime import datetime, timedelta
 import plaid
+import json
 from uuid import uuid4
 from .models import User
 from .utils import get_plaid_client
@@ -248,36 +250,62 @@ class GetAccountSerializer(serializers.Serializer):
 
 class TransactionUpdateSerializer(serializers.ModelSerializer):
     email = serializers.CharField()
-    transactions = serializers.JSONField(required=False, read_only=True)
+    transaction_id = serializers.CharField()
+    transaction = serializers.JSONField(required=False, read_only=True)
 
     def validate(self, data):
-        email = data.get("email", None)
+        email = data.get('email', None)
+        transaction_id = data.get('transaction_id', None)
         user = None
         try:
             user = User.objects.get(email=email)
-            if not user.access_token:
-                raise ValidationError('Access Token not generated')
         except ObjectDoesNotExist:
             raise ValidationError('User Does not exist')
 
         access_token = user.access_token
-        transactions = {}
-
+        transaction = {}
         try:
             start_date = '{:%Y-%m-%d}'.format(datetime.now() + timedelta(-30))
             end_date = '{:%Y-%m-%d}'.format(datetime.now())
             transactions = get_transactions.delay(
                 access_token, start_date, end_date)
             transactions = transactions.get()
+            transactions = transactions['transactions']
+            transaction = next(
+                filter(lambda x: x.get('transaction_id') == transaction_id, transactions))
+            if not transaction:
+                raise ValidationError('Invalid Transaction')
         except plaid.errors.PlaidError as e:
             raise ValidationError(str(e))
+        except Exception as e:
+            raise ValidationError(str(e))
 
-        transactions['email'] = email
-        return transactions
+        if not transaction.get('pending'):
+            send_mail(
+                'Transaction Successful',
+                'Your Transaction was successful.',
+                'noreply@example.com',
+                [email],
+                fail_silently=True,
+            )
+        else:
+            send_mail(
+                'Transaction NOT Successful',
+                'Your Transaction was not successful.Currently pending.',
+                'noreply@example.com',
+                [email],
+                fail_silently=True,
+            )
+        data = {}
+        data['email'] = email
+        data['transaction_id'] = transaction_id
+        data['transaction'] = transaction
+        return data
 
     class Meta:
         model = User
         fields = (
             'email',
-            'transactions',
+            'transaction_id',
+            'transaction'
         )
