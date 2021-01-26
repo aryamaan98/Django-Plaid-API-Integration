@@ -26,6 +26,11 @@ Integrating Plaid
 --- python manage.py migrate
 ```
 
+### Start Worker Process
+```bash
+--- celery -A IntegratingPlaid  worker -l info
+```
+
 ### Run Server
 ```bash
 --- python manage.py runserver
